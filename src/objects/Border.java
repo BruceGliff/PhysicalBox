@@ -1,6 +1,6 @@
 package objects;
 
-import java.awt.*;
+import java.awt.Graphics;
 import geometry.*;
 
 public class Border {
@@ -14,4 +14,6 @@ public class Border {
 
     public float getWidth() { return RD.getX() - LU.getX(); }
     public float getHeight() { return LU.getY() - RD.getY(); }
+
+    public void draw(Graphics g) { g.drawRect(LU.getX(), LU.getY(), getWidth(), getHeight()); }
 }

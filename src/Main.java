@@ -17,6 +17,7 @@ public class Main extends Applet
   }
   public void paint(Graphics g) {
     g.drawString("Welcome To Java Applet " + Integer.toString(i++) + Float.toString(p1.getY()), 40, 50);
+    PlayBorder.draw(g);
     repaint();
   }
 }
