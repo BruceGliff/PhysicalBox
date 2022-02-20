@@ -1,19 +1,21 @@
 import java.awt.*;
 import java.applet.*;
 
-import decoy.Decoy;
+import geometry.*;
 
 public class Main extends Applet
 {
-  String DecoyMsg;
+  Vector p1;
+  int i = 1;
 
   public void init() {
-    Decoy Dcy = new Decoy();
-    DecoyMsg = Dcy.decoy_msg();
+    Vector p = new Vector(2,3);
+    p1 = new Vector(p);
     setForeground(Color.white);
-    setBackground(Color.blue);
+    setBackground(Color.white);
   }
   public void paint(Graphics g) {
-    g.drawString("Welcome To Java Applet " + DecoyMsg ,40,50);
+    g.drawString("Welcome To Java Applet " + Integer.toString(i++) + Float.toString(p1.getY()), 40, 50);
+    repaint();
   }
 }
