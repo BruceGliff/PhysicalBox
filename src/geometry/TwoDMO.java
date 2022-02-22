@@ -2,17 +2,17 @@ package geometry;
 
 // Two-dim math obj
 public class TwoDMO {
-  float x = 0;
-  float y = 0;
+  double x = 0;
+  double y = 0;
 
   public TwoDMO() {}
-  public TwoDMO(float x, float y) { setXY(x, y); }
+  public TwoDMO(double x, double y) { setXY(x, y); }
 
-  public float getX() { return x; };
-  public float getY() { return y; };
+  public double getX() { return x; };
+  public double getY() { return y; };
 
-  public void setX(float x) { this.x = x; };
-  public void setY(float y) { this.y = y; };
-  public void setXY(float x, float y) { this.x = x; this.y = y; };
+  public void setX(double x) { this.x = x; };
+  public void setY(double y) { this.y = y; };
+  public void setXY(double x, double y) { this.x = x; this.y = y; };
 
 }
