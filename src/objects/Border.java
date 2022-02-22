@@ -10,10 +10,12 @@ public class Border {
     Point RD;
 
     public Border() { LU = new Point(0, 0); RD = new Point(100, 200); }
-    public Border(Point LU, Point RD) { this.LU = LU; this.RU = RD; };
+    public Border(Point LU, Point RD) { this.LU = LU; this.RD = RD; };
 
     public float getWidth() { return RD.getX() - LU.getX(); }
-    public float getHeight() { return LU.getY() - RD.getY(); }
+    public float getHeight() { return RD.getY() - LU.getY(); }
 
-    public void draw(Graphics g) { g.drawRect(LU.getX(), LU.getY(), getWidth(), getHeight()); }
+    public void draw(Graphics g) {
+      g.drawRect((int)LU.getX(), (int)LU.getY(), (int)getWidth(), (int)getHeight());
+    }
 }
