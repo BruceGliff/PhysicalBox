@@ -17,8 +17,7 @@ public class Vector extends TwoDMO {
   
   public double dot(Vector Other) { return x*Other.x + y*Other.y; }
   public void scale(double Lenght) {
-    double sqrt = Math.sqrt(Lenght);
-    x*=sqrt;
-    y*=sqrt;
+    x*=Lenght;
+    y*=Lenght;
   }
 }

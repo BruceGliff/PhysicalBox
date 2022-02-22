@@ -29,7 +29,7 @@ public class Box {
         double InitAngle = Math.PI/2;
         for (int i = 0; i != 4; ++i) {
             double LocalAngle = InitAngle * i + Math.PI/4 + Angle;
-            Vector Direction = new Vector (Math.cos(LocalAngle), Math.sin(LocalAngle));
+            Vector Direction = new Vector(Math.cos(LocalAngle), Math.sin(LocalAngle));
             Direction.scale(HalfDiag);
             Points[i] = Position.displace(Direction);
         }
