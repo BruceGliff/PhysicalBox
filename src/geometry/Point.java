@@ -10,5 +10,6 @@ public class Point extends TwoDMO {
 
   public String getDbg() { return "x: " + Double.toString(x) + "; y: " + Double.toString(y); }
 
-  public Point displace(Vector Dir) { return new Point(x+Dir.getX(), y+Dir.getY());}
+  public void move(Vector Dir) { x+=Dir.getX(); y+=Dir.getY(); }
+  public Point displace(Vector Dir) { return new Point(x+Dir.getX(), y+Dir.getY()); }
 }

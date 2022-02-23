@@ -18,4 +18,17 @@ public class Border {
     public void draw(Graphics g) {
       g.drawRect((int)LU.getX(), (int)LU.getY(), (int)getWidth(), (int)getHeight());
     }
+
+    public int isPointInside(Point P) {
+      if (P.getX() <= LU.getX())
+        return 3;
+      if (P.getX() >= RD.getX())
+        return 1;
+      if (P.getY() >= RD.getY())
+        return 2;
+      if (P.getY() <= LU.getY())
+        return 0;
+
+      return -1;
+    }
 }

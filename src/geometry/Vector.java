@@ -13,11 +13,14 @@ public class Vector extends TwoDMO {
   public String getDbg() { return "x: " + Double.toString(x) + "; y: " + Double.toString(y); }
 
   public double length2() { return x*x + y*y; }
-  public double lenght() { return Math.sqrt(length2()); }
+  public double length() { return Math.sqrt(length2()); }
   
   public double dot(Vector Other) { return x*Other.x + y*Other.y; }
+  public void norm() { scale(1.0/length()); }
   public void scale(double Lenght) {
     x*=Lenght;
     y*=Lenght;
   }
+  public Vector extend(double Length) { return new Vector(x*Length, y*Length); }
+  public void add(Vector Other) { x+=Other.x; y+=Other.y; }
 }
