@@ -14,21 +14,23 @@ public class Border {
 
     public double getWidth() { return RD.getX() - LU.getX(); }
     public double getHeight() { return RD.getY() - LU.getY(); }
+    public Point getLU() { return LU; };
+    public Point getRD() { return RD; };
 
     public void draw(Graphics g) {
       g.drawRect((int)LU.getX(), (int)LU.getY(), (int)getWidth(), (int)getHeight());
     }
 
-    public int isPointInside(Point P) {
+    public HitResult checkHit(Point P) {
       if (P.getX() <= LU.getX())
-        return 3;
+        return new HitResult(new Vector(1, 0));
       if (P.getX() >= RD.getX())
-        return 1;
+        return new HitResult(new Vector(-1, 0));
       if (P.getY() >= RD.getY())
-        return 2;
+        return new HitResult(new Vector(0, -1));
       if (P.getY() <= LU.getY())
-        return 0;
+        return new HitResult(new Vector(0, 1));
 
-      return -1;
+      return new HitResult();
     }
 }

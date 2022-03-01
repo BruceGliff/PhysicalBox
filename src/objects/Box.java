@@ -55,75 +55,32 @@ public class Box {
 
     public void checkIntersection(Border B) {
         for (int i = 0; i != 4; ++i) {
-            int H = B.isPointInside(Points[i]);
-            if (H != -1)
-                calculateBounce(i, H);
+            HitResult Hit = B.checkHit(Points[i]);
+            // int H = B.isPointInside(Points[i]);
+            if (Hit.isHit())
+                calculateBounce(i, Hit.getNorm());
         }
     }
 
-    public void calculateBounce(int i, int H) {
+    public void calculateBounce(int i, Vector Norm) {
         Point P = Points[i];
-        // Vector via center
-        Vector at = new Vector(P, Position);
-        at.norm();
-        // Vector perpend at;
-        Vector ap = new Vector(at.getY(), -at.getX());
-        ap.norm();
+        double I = HalfDiag * HalfDiag * 0.333333;
+        Vector R = new Vector(Position, P);
+        
+        Vector V = new Vector(Velocity);
+        Vector AngleVel = new Vector(-R.getY(), R.getX());
+        AngleVel.scale(Spin);
+        V.add(AngleVel);
+        
+        Vector Vn0 = new Vector(Norm);
+        Vn0.scale(2.0 * V.dot(Norm)); // deltaV along Norm
+        
+        V.add(Vn0);// Gets final Velocity vector;
 
-        // ABS velocity of all points 
-        Vector[] AbsPVs = new Vector[4];
-        for (int j = 0; j != 4; ++j) {
-            Vector R = new Vector(Position, Points[j]);
-            AbsPVs[j] = new Vector(-Spin * R.getY(), Spin * R.getX());
-            AbsPVs[j].add(Velocity);
-        }
+        Spin -= (2 / I) * (R.getX() * V.getY() - R.getY() * V.getX());
+        
+        Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
 
-        double vX = AbsPVs[i].getX();
-        double vY = AbsPVs[i].getY();
-
-        switch(H) {
-            case 0:
-              // up
-              AbsPVs[i].setY(-vY);
-              break;
-            case 1:
-              // right
-              AbsPVs[i].setX(-vX);
-              break;
-            case 2:
-              // down
-              AbsPVs[i].setY(-vY);
-              break;
-            case 3:
-              // left
-              AbsPVs[i].setX(-vX);
-              break;
-          }
-          
-
-          // Get projections on axes via Center and perpendicular it.
-          Vector AbsV_t[] = new Vector[4];
-          Vector AbsV_p[] = new Vector[4];
-          for (int j = 0; j != 4; ++j) {
-            AbsV_t[j] = at.extend( AbsPVs[j].dot(at) );
-            AbsV_p[j] = ap.extend( AbsPVs[j].dot(ap) );
-          }
-
-          double newVX_t = 0;
-          double newVY_t = 0;
-          double newVX_p = 0;
-          double newVY_p = 0;
-          for (int j = 0; j != 4; ++j) {
-            newVX_t += AbsV_t[j].getX();
-            newVY_t += AbsV_t[j].getY();
-            // It has to be calculater different!!
-            newVX_p += AbsV_p[j].getX();
-            newVY_p += AbsV_p[j].getY();
-          }
-
-          Velocity.setX(newVX_t + newVX_p / 4);
-          Velocity.setY(newVY_t + newVY_p / 4);
-
-          // TODO calculate spin
+        Position.move(new Vector(Norm).extend(10));
     }
 }

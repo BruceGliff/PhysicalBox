@@ -15,4 +15,6 @@ public class TwoDMO {
   public void setY(double y) { this.y = y; };
   public void setXY(double x, double y) { this.x = x; this.y = y; };
 
+  public void set(TwoDMO Other) { this.x = Other.x; this.y = Other.y; }
+
 }
