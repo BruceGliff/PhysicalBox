@@ -1,6 +1,8 @@
 package objects;
 
 import java.awt.Graphics;
+import java.net.SocketPermission;
+
 import geometry.*;
 import objects.*;
 
@@ -66,20 +68,33 @@ public class Box {
         Point P = Points[i];
         double I = HalfDiag * HalfDiag * 0.333333;
         Vector R = new Vector(Position, P);
-        
+
         Vector V = new Vector(Velocity);
         Vector AngleVel = new Vector(-R.getY(), R.getX());
         AngleVel.scale(Spin);
         V.add(AngleVel);
         
+        // System.out.println(V.getDbg());
+
         Vector Vn0 = new Vector(Norm);
-        Vn0.scale(2.0 * V.dot(Norm)); // deltaV along Norm
+        Vn0.scale(-2.0 * V.dot(Norm)); // deltaV along Norm
         
         V.add(Vn0);// Gets final Velocity vector;
-
-        Spin -= (2 / I) * (R.getX() * V.getY() - R.getY() * V.getX());
         
+        // System.out.println(Vn0.getDbg());
+        // System.out.println(R.getDbg());
+        Spin -= (1 / I) * (R.getX() * Vn0.getY() - R.getY() * Vn0.getX());
         Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
+
+        // System.out.println(Spin);
+        // System.out.println(Velocity.getDbg());
+
+        
+    // try {
+    //     Thread.sleep(10000);
+    // } catch (Exception e) {
+    //     e.printStackTrace();
+    // }
 
         Position.move(new Vector(Norm).extend(10));
     }
