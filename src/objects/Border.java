@@ -23,13 +23,13 @@ public class Border {
 
     public HitResult checkHit(Point P) {
       if (P.getX() <= LU.getX())
-        return new HitResult(new Vector(1, 0));
+        return new HitResult(new Vector(1, 0), new Point(LU.getX()+1, P.getY()));
       if (P.getX() >= RD.getX())
-        return new HitResult(new Vector(-1, 0));
+        return new HitResult(new Vector(-1, 0), new Point(RD.getX()-1, P.getY()));
       if (P.getY() >= RD.getY())
-        return new HitResult(new Vector(0, -1));
+        return new HitResult(new Vector(0, -1), new Point(P.getX(), RD.getY()-1));
       if (P.getY() <= LU.getY())
-        return new HitResult(new Vector(0, 1));
+        return new HitResult(new Vector(0, 1), new Point(P.getX(), LU.getY()+1));
 
       return new HitResult();
     }

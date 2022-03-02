@@ -60,44 +60,41 @@ public class Box {
             HitResult Hit = B.checkHit(Points[i]);
             // int H = B.isPointInside(Points[i]);
             if (Hit.isHit())
-                calculateBounce(i, Hit.getNorm());
+                calculateBounce(i, Hit);
         }
     }
 
-    public void calculateBounce(int i, Vector Norm) {
+    public void calculateBounce(int i, HitResult Hit) {
         Point P = Points[i];
         double I = HalfDiag * HalfDiag * 0.333333;
         Vector R = new Vector(Position, P);
+
+        double EnBefore = I * Spin * Spin + Velocity.length2();
 
         Vector V = new Vector(Velocity);
         Vector AngleVel = new Vector(-R.getY(), R.getX());
         AngleVel.scale(Spin);
         V.add(AngleVel);
         
-        // System.out.println(V.getDbg());
-
+        Vector Norm = Hit.getNorm();
         Vector Vn0 = new Vector(Norm);
         Vn0.scale(-2.0 * V.dot(Norm)); // deltaV along Norm
         
         V.add(Vn0);// Gets final point's Velocity vector;
         
-        // System.out.println(Vn0.getDbg());
-        // System.out.println(R.getDbg());
         Spin += (1 / I) * (R.getX() * Vn0.getY() - R.getY() * Vn0.getX());
         
         Velocity.set(V);
         Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
 
-        // System.out.println(Spin);
-        // System.out.println(Velocity.getDbg());
+        double EnAfter = I * Spin * Spin + Velocity.length2();
+        double Ratio = Math.sqrt(EnBefore / EnAfter);
 
-        
-    // try {
-    //     Thread.sleep(10000);
-    // } catch (Exception e) {
-    //     e.printStackTrace();
-    // }
+        System.out.println(Ratio);
+        Spin *= Ratio;
+        Velocity.scale(Ratio);
 
-        Position.move(new Vector(Norm).extend(10));
+        Vector Displace = new Vector(P, Hit.getHitPosition());
+        Position.move(Displace);
     }
 }
