@@ -79,11 +79,13 @@ public class Box {
         Vector Vn0 = new Vector(Norm);
         Vn0.scale(-2.0 * V.dot(Norm)); // deltaV along Norm
         
-        V.add(Vn0);// Gets final Velocity vector;
+        V.add(Vn0);// Gets final point's Velocity vector;
         
         // System.out.println(Vn0.getDbg());
         // System.out.println(R.getDbg());
-        Spin -= (1 / I) * (R.getX() * Vn0.getY() - R.getY() * Vn0.getX());
+        Spin += (1 / I) * (R.getX() * Vn0.getY() - R.getY() * Vn0.getX());
+        
+        Velocity.set(V);
         Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
 
         // System.out.println(Spin);
