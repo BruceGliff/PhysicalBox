@@ -10,7 +10,7 @@ do
         MAIN="$REPLY"
     else
         echo "compile $REPLY"
-        javac -d $OUT "$REPLY"
+        javac -cp $OUT -d $OUT "$REPLY"
     fi
 done 9< <( find ../src -name "*.java" -type f -exec printf '%s\0' {} + )
 
