@@ -1,6 +1,9 @@
 package objects;
 
 import java.awt.Graphics;
+
+import javax.swing.text.Position;
+
 import geometry.*;
 
 public class Border {
@@ -34,21 +37,35 @@ public class Border {
         return Hits;
 
       for (int i = 0; i != 4; ++i)
-        Hits[i] = checkHit(Points[i], 3);
+        Hits[i] = checkHit(Points[i], 5);
 
       return Hits;
     }
 
     public HitResult checkHit(Point P, float Disp) {
-      if (P.getX() <= LU.getX() + Disp)
-        return new HitResult(new Vector(1, 0), new Point(LU.getX()+1, P.getY()));
-      if (P.getX() >= RD.getX() - Disp)
-        return new HitResult(new Vector(-1, 0), new Point(RD.getX()-1, P.getY()));
-      if (P.getY() >= RD.getY() - Disp)
-        return new HitResult(new Vector(0, -1), new Point(P.getX(), RD.getY()-1));
-      if (P.getY() <= LU.getY() + Disp)
-        return new HitResult(new Vector(0, 1), new Point(P.getX(), LU.getY()+1));
 
-      return new HitResult();
+      Vector Norm = new Vector();
+      boolean IsHit = false;
+      if (P.getX() <= LU.getX() + Disp) {// West/Left. 
+        Norm.add(new Vector(1, 0));
+        IsHit = true;
+      }
+      if (P.getX() >= RD.getX() - Disp) {// East/Right.
+        Norm.add(new Vector(-1, 0));
+        IsHit = true;
+      }
+      if (P.getY() >= RD.getY() - Disp) {// South/Down.
+        Norm.add(new Vector(0, -1));
+        IsHit = true;
+      }
+      if (P.getY() <= LU.getY() + Disp) {// North/Up.
+        Norm.add(new Vector(0, 1));
+        IsHit = true;
+      }
+      if (!IsHit)
+        return new HitResult();
+
+      Norm.norm();
+      return new HitResult(Norm, new Point());
     }
 }

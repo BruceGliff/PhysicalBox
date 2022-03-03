@@ -77,51 +77,46 @@ public class Box {
     }
 
     public void calculateBounce(HitResult Hits[]) {
-        long NowHit = System.currentTimeMillis();
-        long HitDelta = NowHit - PrevHit;
-        PrevHit = NowHit;
-
-
-        float Momentum = 0;
         float I = HalfDiag * HalfDiag * 0.333333f;
         float EnBefore = I * Spin * Spin + Velocity.length2();
 
-        Vector Displacement = new Vector();
+        Vector AverageNorm = new Vector();
+        float HitCenterX = 0;
+        float HitCenterY = 0;
+        int HitPoints = 0;
 
-        // One of the hit points and velocity one the hit points.
-        Point P = new Point();
-        Vector V = new Vector();
-        // Rad-vector if this point.
-        Vector R = new Vector();
         for (int i = 0; i != 4; ++i) {
             if (Hits[i].isHit()) {
-                P = Points[i];
+                HitPoints++;
+                Point P = Points[i];
                 HitResult Hit = Hits[i];
 
-                V = calcFullVelocity(P);
-                Vector Norm = Hit.getNorm();
-                R = new Vector(Position, P);
-                Vector Vn0 = new Vector(Norm);
-                Vn0.scale(-2.f * V.dot(Norm)); // deltaV along Norm
-                V.add(Vn0);// Gets final point's Velocity vector;
-
-                Displacement.add(new Vector(P, Hit.getHitPosition()));
-
-                Momentum += R.getX() * Vn0.getY() - R.getY() * Vn0.getX();
+                AverageNorm.add(Hit.getNorm());
+                HitCenterX += P.getX();
+                HitCenterY += P.getY();
             }
         }
+        AverageNorm.norm();
+        Point HitCenter = new Point(HitCenterX / HitPoints, HitCenterY / HitPoints);
+
+        Vector R = new Vector(Position, HitCenter);
+        Vector Vn0 = new Vector(AverageNorm);
+        Vn0.scale(-2.0f * Vn0.dot(Velocity)); // The deltaVn and also the Force.
+
+        float Momentum = R.getX() * Vn0.getY() - R.getY() * Vn0.getX();
         Spin += (1 / I) * Momentum;
-        Velocity.set(V);
-        Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
+
+        Velocity.add(Vn0);
 
         float EnAfter = I * Spin * Spin + Velocity.length2();
-        float Ratio = (float)Math.sqrt(EnBefore / EnAfter);
+        float Ratio = (float)Math.sqrt(EnBefore * 0.9 / EnAfter);
+        Spin *= Ratio * 0.6;
+        Velocity.scale( Ratio );
 
-        float Coef = HitDelta < 200 ? 1.5f :  1.f;
-        Spin *= Ratio / Coef;
-        Velocity.scale(Ratio);
+        if (Velocity.length2() < 500)
+            Velocity.setXY(0, 0);
 
-        Position.move(Displacement);
-    
+        AverageNorm.scale(1.f);
+        Position.move(AverageNorm);    
     }
 }

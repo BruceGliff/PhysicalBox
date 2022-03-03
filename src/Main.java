@@ -16,7 +16,7 @@ public class Main extends Applet
   public void init() {
     PlayBorder = new Border(new geometry.Point(10,10), new geometry.Point(900, 600));
     PlayBox = new Box(new geometry.Point(200, 200),  (float)Math.PI/4, 150.0f, new Vector(-100, 100), 0.1f);
-    Force = new Vector(0, 140);
+    Force = new Vector(0, 200);
 
     Delta = 0;
 
