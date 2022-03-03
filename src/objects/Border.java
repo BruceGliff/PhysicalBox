@@ -37,7 +37,7 @@ public class Border {
         return Hits;
 
       for (int i = 0; i != 4; ++i)
-        Hits[i] = checkHit(Points[i], 5);
+        Hits[i] = checkHit(Points[i], 0);
 
       return Hits;
     }

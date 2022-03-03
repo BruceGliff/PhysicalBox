@@ -109,7 +109,7 @@ public class Box {
         Velocity.add(Vn0);
 
         float EnAfter = I * Spin * Spin + Velocity.length2();
-        float Ratio = (float)Math.sqrt(EnBefore * 0.9 / EnAfter);
+        float Ratio = (float)Math.sqrt(EnBefore / EnAfter);
         Spin *= Ratio * 0.6;
         Velocity.scale( Ratio );
 
