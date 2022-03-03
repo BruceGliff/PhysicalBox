@@ -9,29 +9,32 @@ import objects.*;
 public class Box {
     Point[] Points;
 
-    double HalfDiag;
+    float HalfDiag;
     Point Position;
-    double Angle;
+    float Angle;
 
     Vector Velocity;
-    double Spin;
+    float Spin;
+
+    long PrevHit;
 
     // Specify exactly 4 points.
-    public Box(Point Position, double Angle, double Width, Vector Velocity, double Spin) {
+    public Box(Point Position, float Angle, float Width, Vector Velocity, float Spin) {
         this.Position = Position;
         this.Angle = Angle;
-        this.HalfDiag = Width * 0.707; //  Width/sqrt(2)
+        this.HalfDiag = Width * 0.707f; //  Width/sqrt(2)
         this.Velocity = Velocity;
         this.Spin = Spin;
         this.Points = new Point[4];
+        this.PrevHit = 0;
         calculatePoints();
     }
 
     void calculatePoints() {
-        double InitAngle = Math.PI/2;
+        float InitAngle = (float)Math.PI/2;
         for (int i = 0; i != 4; ++i) {
-            double LocalAngle = InitAngle * i + Math.PI/4 + Angle;
-            Vector Direction = new Vector(Math.cos(LocalAngle), Math.sin(LocalAngle));
+            float LocalAngle = InitAngle * i + (float)Math.PI/4 + Angle;
+            Vector Direction = new Vector((float)Math.cos(LocalAngle), (float)Math.sin(LocalAngle));
             Direction.scale(HalfDiag);
             Points[i] = Position.displace(Direction);
         }
@@ -45,8 +48,8 @@ public class Box {
         }
     }
 
-    public void process(Vector Force, double Delta) {
-        double Time = Delta / 1000;
+    public void process(Vector Force, float Delta) {
+        float Time = Delta / 1000;
         
         Position.move(Velocity.extend(Time));
         Velocity.add(Force.extend(Time));
@@ -56,45 +59,64 @@ public class Box {
     }
 
     public void checkIntersection(Border B) {
-        for (int i = 0; i != 4; ++i) {
-            HitResult Hit = B.checkHit(Points[i]);
-            // int H = B.isPointInside(Points[i]);
-            if (Hit.isHit())
-                calculateBounce(i, Hit);
-        }
+        HitResult Hits[] = B.checkHits(Points);
+        for (int i = 0; i != 4; ++i)
+            if (Hits[i].isHit()) {
+                calculateBounce(Hits);
+                break;
+            }
     }
 
-    public void calculateBounce(int i, HitResult Hit) {
-        Point P = Points[i];
-        double I = HalfDiag * HalfDiag * 0.333333;
+    public Vector calcFullVelocity(Point P) {
         Vector R = new Vector(Position, P);
-
-        double EnBefore = I * Spin * Spin + Velocity.length2();
-
         Vector V = new Vector(Velocity);
         Vector AngleVel = new Vector(-R.getY(), R.getX());
         AngleVel.scale(Spin);
         V.add(AngleVel);
-        
-        Vector Norm = Hit.getNorm();
-        Vector Vn0 = new Vector(Norm);
-        Vn0.scale(-2.0 * V.dot(Norm)); // deltaV along Norm
-        
-        V.add(Vn0);// Gets final point's Velocity vector;
-        
-        Spin += (1 / I) * (R.getX() * Vn0.getY() - R.getY() * Vn0.getX());
-        
-        Velocity.set(V);
-        Velocity.add(new Vector(R.getY(), -R.getX()).extend(Spin));
+        return V;
+    }
 
-        double EnAfter = I * Spin * Spin + Velocity.length2();
-        double Ratio = Math.sqrt(EnBefore / EnAfter);
+    public void calculateBounce(HitResult Hits[]) {
+        float I = HalfDiag * HalfDiag * 0.333333f;
+        float EnBefore = I * Spin * Spin + Velocity.length2();
 
-        System.out.println(Ratio);
-        Spin *= Ratio;
-        Velocity.scale(Ratio);
+        Vector AverageNorm = new Vector();
+        float HitCenterX = 0;
+        float HitCenterY = 0;
+        int HitPoints = 0;
 
-        Vector Displace = new Vector(P, Hit.getHitPosition());
-        Position.move(Displace);
+        for (int i = 0; i != 4; ++i) {
+            if (Hits[i].isHit()) {
+                HitPoints++;
+                Point P = Points[i];
+                HitResult Hit = Hits[i];
+
+                AverageNorm.add(Hit.getNorm());
+                HitCenterX += P.getX();
+                HitCenterY += P.getY();
+            }
+        }
+        AverageNorm.norm();
+        Point HitCenter = new Point(HitCenterX / HitPoints, HitCenterY / HitPoints);
+
+        Vector R = new Vector(Position, HitCenter);
+        Vector Vn0 = new Vector(AverageNorm);
+        Vn0.scale(-2.0f * Vn0.dot(Velocity)); // The deltaVn and also the Force.
+
+        float Momentum = R.getX() * Vn0.getY() - R.getY() * Vn0.getX();
+        Spin += (1 / I) * Momentum;
+
+        Velocity.add(Vn0);
+
+        float EnAfter = I * Spin * Spin + Velocity.length2();
+        float Ratio = (float)Math.sqrt(EnBefore / EnAfter);
+        Spin *= Ratio * 0.6;
+        Velocity.scale( Ratio );
+
+        if (Velocity.length2() < 500)
+            Velocity.setXY(0, 0);
+
+        AverageNorm.scale(1.f);
+        Position.move(AverageNorm);    
     }
 }
