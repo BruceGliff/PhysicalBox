@@ -1,6 +1,6 @@
 package geometry;
 
-import geometry.*;
+import geometry.TwoDMO;
 
 public class Point extends TwoDMO {
 
@@ -10,6 +10,6 @@ public class Point extends TwoDMO {
 
   public String getDbg() { return "x: " + Float.toString(x) + "; y: " + Float.toString(y); }
 
-  public void move(Vector Dir) { x+=Dir.getX(); y+=Dir.getY(); }
-  public Point displace(Vector Dir) { return new Point(x+Dir.getX(), y+Dir.getY()); }
+  public void move(TwoDMO Dir) { x+=Dir.getX(); y+=Dir.getY(); }
+  public Point displace(TwoDMO Dir) { return new Point(x+Dir.getX(), y+Dir.getY()); }
 }
